@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  Aplikasi manajemen peminjaman buku perpustakaan sekolah dengan antarmuka yang estetis dan mudah digunakan.
+  Aplikasi manajemen peminjaman buku perpustakaan sekolah dengan antarmuka yang estetik dan mudah digunakan.
 </p>
 
 <p align="center">
-  <a href="https://github.com/manggalaputraaji/LITERAKSI"><img src="https://img.shields.io/badge/status-dalam%20pengembangan-orange" alt="Status: Dalam pengembangan"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="Lisensi: Apache 2.0"></a>
-  <a href="https://github.com/manggalaputraaji/LITERAKSI/issues"><img src="https://img.shields.io/github/issues/manggalaputraaji/LITERAKSI" alt="GitHub issues"></a>
+<a href="https://github.com/manggalaputraaji/LITERAKSI"><img src="https://img.shields.io/badge/status-dalam%20pengembangan-informational?style=flat-square" alt="Status: Dalam pengembangan"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL_3.0-yellowgreen?style=flat-square" alt="Lisensi: GNU GPL 3.0"></a>
+<a href="https://github.com/manggalaputraaji/LITERAKSI/Issues"><img src="https://img.shields.io/github/issues/manggalaputraaji/LITERAKSI?color=important&style=flat-square" alt="GitHub issues"></a>
 </p>
 
 ## Tentang Proyek
@@ -47,9 +47,12 @@ Proyek ini dikembangkan sebagai solusi digital untuk mengurangi pencatatan manua
 Teknologi yang digunakan akan diperbarui setelah implementasi aplikasi tersedia. Badge berikut disiapkan sebagai bagian dari dokumentasi proyek dan dapat disesuaikan dengan stack final.
 
 <p>
-  <img src="https://img.shields.io/badge/HTML5-Documentation-E34F26?logo=html5&logoColor=white" alt="HTML5">
-  <img src="https://img.shields.io/badge/CSS3-Documentation-1572B6?logo=css3&logoColor=white" alt="CSS3">
-  <img src="https://img.shields.io/badge/JavaScript-Documentation-F7DF1E?logo=javascript&logoColor=black" alt="JavaScript">
+  <img src="https://img.shields.io/badge/HTML5-Documentation-E34F26?logo=html5&style=for-the-badge&labelColor=e3e3e3" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS-Documentation-663399?logo=css&style=for-the-badge&logoColor=663399&labelColor=e3e3e3" alt="CSS">
+  <img src="https://img.shields.io/badge/JavaScript-Documentation-bdaa17?logo=javascript&style=for-the-badge&labelColor=e3e3e3&logoColor=bdaa17" alt="JavaScript">
+  <img src="https://img.shields.io/badge/PHP-Documentation-777BB4?logo=php&style=for-the-badge&labelColor=e3e3e3" alt="PHP">
+  <img src="https://img.shields.io/badge/MySQL-Documentation-00758F?logo=mysql&style=for-the-badge&logoColor=00758F&labelColor=e3e3e3" alt="MySQL">
+  <img src="https://img.shields.io/badge/phpMyAdmin-Documentation-F89C0E?logo=phpmyadmin&style=for-the-badge&logoColor=F89C0E&labelColor=e3e3e3" alt="phpMyAdmin">
 </p>
 
 ## Demo dan Pratinjau
@@ -63,8 +66,6 @@ Bagian ini akan menampilkan tampilan aplikasi setelah screenshot tersedia.
 ### Pencatatan Peminjaman
 
 ![Pratinjau pencatatan peminjaman LITERAKSI](assets/screenshots/borrowing.png)
-
-> Untuk menambahkan screenshot, simpan gambar di folder `assets/screenshots/` dengan nama `dashboard.png` dan `borrowing.png`.
 
 ## Memulai Pengembangan
 
@@ -107,7 +108,7 @@ Sebelum membuat issue baru, silakan periksa issue yang sudah tersedia untuk meng
 
 ## Lisensi
 
-LITERAKSI didistribusikan di bawah [Apache License 2.0](LICENSE).
+LITERAKSI didistribusikan di bawah [GNU General Public License 3.0](LICENSE).
 
 ## Pengembang
 
