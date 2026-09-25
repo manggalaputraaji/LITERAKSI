@@ -1,4 +1,4 @@
-# LITERAKSI
+# LITERAKSI: Baca, Pahami, Beraksi
 
 > A beautiful, practical way to track book lending in a school library.
 
@@ -16,14 +16,14 @@ School libraries need more than a list of books—they need a simple, reliable w
 - **Aesthetic UI** — make everyday administration feel clear and inviting.
 - **Room to grow** — provide a foundation for future catalog, member, and reporting features.
 
-## 🎯 Core goals
+## Core goals
 
 - Reduce manual effort when recording book loans.
 - Make lending information easier to find and understand.
 - Help library staff maintain a more dependable borrowing history.
 - Offer students and staff a more polished library-management experience.
 
-## 🧭 Planned feature areas
+## Planned feature areas
 
 > Feature availability may evolve as the project develops.
 
@@ -36,11 +36,11 @@ School libraries need more than a list of books—they need a simple, reliable w
 - [ ] Responsive layout for different screen sizes
 - [ ] Exportable reports
 
-## 🖼️ Preview
+## Preview
 
 Screenshots and a product walkthrough will be added as the interface develops.
 
-## 🚀 Getting started
+## Getting started
 
 LITERAKSI is currently in early development. The repository is being prepared for the application source code, installation instructions, and development workflow.
 
@@ -52,13 +52,13 @@ Once the implementation is available, this section will document:
 4. Local development
 5. Testing and production builds
 
-## 🗂️ Project status
+## Project status
 
 LITERAKSI is an active project in its initial stage. Expect the architecture, feature set, and documentation to evolve as the application takes shape.
 
 Suggestions, improvements, and thoughtful feedback are welcome.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome once the development workflow is published. If you have an idea or find an issue:
 
@@ -69,11 +69,11 @@ Contributions are welcome once the development workflow is published. If you hav
 
 Please check the repository issues before opening a duplicate report.
 
-## 📄 License
+## License
 
 LITERAKSI is distributed under the [Apache License 2.0](LICENSE).
 
-## 👤 Author
+## Author
 
 Created and maintained by [manggalaputraaji](https://github.com/manggalaputraaji).
 
