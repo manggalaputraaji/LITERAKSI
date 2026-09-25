@@ -1,84 +1,106 @@
 # LITERAKSI: Baca, Pahami, Beraksi
 
-> A beautiful, practical way to track book lending in a school library.
+<p align="center">
+  <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LITERAKSI logo">
+    <defs>
+      <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%" stop-color="#F7F3FF"/>
+        <stop offset="100%" stop-color="#E2E8FF"/>
+      </linearGradient>
+      <linearGradient id="accent" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%" stop-color="#4F46E5"/>
+        <stop offset="100%" stop-color="#7C3AED"/>
+      </linearGradient>
+    </defs>
+    <rect x="18" y="18" width="144" height="144" rx="32" fill="url(#bg)"/>
+    <rect x="48" y="36" width="84" height="108" rx="12" fill="url(#accent)"/>
+    <path d="M62 60H98M62 76H118M62 92H118M62 108H103" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M112 42L133 58V120L112 104V42Z" fill="#C4B5FD" opacity="0.9"/>
+    <path d="M46 126L78 108L98 128L128 106V140H46V126Z" fill="#E0E7FF" opacity="0.9"/>
+  </svg>
+</p>
 
-LITERAKSI is a school-library lending management application designed to make borrowing workflows easier to organize and more pleasant to use. With an aesthetic user interface and a clear lending-focused experience, it helps library staff keep track of books, borrowers, and lending activity in one place.
+> Aplikasi manajemen peminjaman buku perpustakaan sekolah dengan antarmuka yang estetis dan mudah digunakan.
+
+LITERAKSI adalah aplikasi yang membantu mengelola peminjaman buku di perpustakaan sekolah secara lebih teratur, cepat, dan nyaman. Dengan antarmuka yang bersih dan modern, proses pencatatan buku, peminjam, serta kegiatan peminjaman dapat dikelola dalam satu tempat.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Status: Early development](https://img.shields.io/badge/status-early%20development-orange.svg)](https://github.com/manggalaputraaji/LITERAKSI)
 
-## ✨ Why LITERAKSI?
+## Tentang LITERAKSI
 
-School libraries need more than a list of books—they need a simple, reliable way to understand what is available, what is borrowed, and what needs to be returned. LITERAKSI is built around that idea:
+Perpustakaan sekolah memerlukan sistem yang sederhana namun andal untuk mengetahui buku yang tersedia, buku yang sedang dipinjam, serta buku yang sudah harus dikembalikan. LITERAKSI dibuat untuk memenuhi kebutuhan tersebut dengan fokus pada kelancaran proses peminjaman.
 
-- **Simple lending tracking** — keep borrowing records organized.
-- **Library-focused workflow** — designed around the needs of school-library operations.
-- **Aesthetic UI** — make everyday administration feel clear and inviting.
-- **Room to grow** — provide a foundation for future catalog, member, and reporting features.
+## Mengapa LITERAKSI?
 
-## Core goals
+- Pencatatan peminjaman yang praktis dan rapi.
+- Alur kerja yang dirancang khusus untuk kebutuhan perpustakaan sekolah.
+- Tampilan antarmuka yang estetis dan mudah dipahami.
+- Struktur yang dapat dikembangkan untuk fitur katalog, anggota, dan laporan di masa depan.
 
-- Reduce manual effort when recording book loans.
-- Make lending information easier to find and understand.
-- Help library staff maintain a more dependable borrowing history.
-- Offer students and staff a more polished library-management experience.
+## Tujuan Utama
 
-## Planned feature areas
+- Mengurangi pekerjaan manual saat mencatat peminjaman buku.
+- Memudahkan pencarian dan pemahaman data peminjaman.
+- Membantu petugas perpustakaan menjaga riwayat peminjaman dengan lebih baik.
+- Memberikan pengalaman pengelolaan perpustakaan yang lebih modern bagi siswa dan staf.
 
-> Feature availability may evolve as the project develops.
+## Rencana Fitur
 
-- [ ] Book catalog and availability management
-- [ ] Student/member records
-- [ ] Borrowing and return tracking
-- [ ] Due-date and overdue visibility
-- [ ] Search and filtering
-- [ ] Lending activity dashboard
-- [ ] Responsive layout for different screen sizes
-- [ ] Exportable reports
+> Daftar fitur dapat berubah seiring perkembangan proyek.
 
-## Preview
+- [ ] Pengelolaan katalog buku dan ketersediaan
+- [ ] Data siswa atau anggota perpustakaan
+- [ ] Pencatatan peminjaman dan pengembalian
+- [ ] Informasi batas waktu dan keterlambatan
+- [ ] Fitur pencarian dan penyaringan data
+- [ ] Dasbor aktivitas peminjaman
+- [ ] Tampilan responsif untuk berbagai ukuran layar
+- [ ] Ekspor laporan peminjaman
 
-Screenshots and a product walkthrough will be added as the interface develops.
+## Pratinjau
 
-## Getting started
+Screenshot dan demo aplikasi akan ditambahkan seiring perkembangan antarmuka dan fitur.
 
-LITERAKSI is currently in early development. The repository is being prepared for the application source code, installation instructions, and development workflow.
+## Memulai Pengembangan
 
-Once the implementation is available, this section will document:
+LITERAKSI masih dalam tahap awal pengembangan. Dokumentasi instalasi dan panduan pengembangan akan dilengkapi setelah source code aplikasi tersedia.
 
-1. Prerequisites
-2. Installation
-3. Environment variables
-4. Local development
-5. Testing and production builds
+Bagian ini nantinya akan mencakup:
 
-## Project status
+1. Persyaratan sistem
+2. Instalasi dependensi
+3. Konfigurasi environment variable
+4. Menjalankan aplikasi secara lokal
+5. Pengujian dan build produksi
 
-LITERAKSI is an active project in its initial stage. Expect the architecture, feature set, and documentation to evolve as the application takes shape.
+## Status Proyek
 
-Suggestions, improvements, and thoughtful feedback are welcome.
+LITERAKSI merupakan proyek aktif yang masih dalam tahap awal. Arsitektur, fitur, dan dokumentasi dapat berkembang sesuai kebutuhan pengembangan.
 
-## Contributing
+Saran, ide, dan masukan sangat terbuka.
 
-Contributions are welcome once the development workflow is published. If you have an idea or find an issue:
+## Kontribusi
 
-1. Open an issue describing the problem or proposal.
-2. For changes, create a focused branch.
-3. Keep commits clear and changes scoped.
-4. Open a pull request with context and screenshots where relevant.
+Kontribusi sangat terbuka setelah alur kerja pengembangan dipublikasikan. Jika Anda menemukan masalah atau memiliki ide pengembangan:
 
-Please check the repository issues before opening a duplicate report.
+1. Buka issue yang menjelaskan masalah atau usulan Anda.
+2. Buat branch khusus untuk perubahan yang ingin dilakukan.
+3. Gunakan commit yang jelas dan terfokus.
+4. Buat pull request dengan deskripsi yang jelas dan lampiran screenshot jika diperlukan.
 
-## License
+Sebelum membuat issue baru, silakan cek issue yang sudah ada agar tidak terjadi duplikasi.
 
-LITERAKSI is distributed under the [Apache License 2.0](LICENSE).
+## Lisensi
 
-## Author
+LITERAKSI didistribusikan di bawah [Apache License 2.0](LICENSE).
 
-Created and maintained by [manggalaputraaji](https://github.com/manggalaputraaji).
+## Pengembang
+
+Dibuat dan dikelola oleh [manggalaputraaji](https://github.com/manggalaputraaji).
 
 ---
 
 <p align="center">
-  Built to make school-library lending simpler, clearer, and more delightful.
+  Dibuat untuk menjadikan pengelolaan peminjaman buku sekolah lebih sederhana, rapi, dan nyaman.
 </p>
