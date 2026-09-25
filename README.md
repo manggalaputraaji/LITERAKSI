@@ -1,95 +1,109 @@
 # LITERAKSI: Baca, Pahami, Beraksi
 
 <p align="center">
-  <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LITERAKSI logo">
-    <defs>
-      <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-        <stop offset="0%" stop-color="#F7F3FF"/>
-        <stop offset="100%" stop-color="#E2E8FF"/>
-      </linearGradient>
-      <linearGradient id="accent" x1="0" x2="1" y1="0" y2="1">
-        <stop offset="0%" stop-color="#4F46E5"/>
-        <stop offset="100%" stop-color="#7C3AED"/>
-      </linearGradient>
-    </defs>
-    <rect x="18" y="18" width="144" height="144" rx="32" fill="url(#bg)"/>
-    <rect x="48" y="36" width="84" height="108" rx="12" fill="url(#accent)"/>
-    <path d="M62 60H98M62 76H118M62 92H118M62 108H103" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M112 42L133 58V120L112 104V42Z" fill="#C4B5FD" opacity="0.9"/>
-    <path d="M46 126L78 108L98 128L128 106V140H46V126Z" fill="#E0E7FF" opacity="0.9"/>
-  </svg>
+  <img src="logo.png" width="180" alt="Logo LITERAKSI">
 </p>
 
-> Aplikasi manajemen peminjaman buku perpustakaan sekolah dengan antarmuka yang estetis dan mudah digunakan.
+<p align="center">
+  Aplikasi manajemen peminjaman buku perpustakaan sekolah dengan antarmuka yang estetis dan mudah digunakan.
+</p>
 
-LITERAKSI adalah aplikasi yang membantu mengelola peminjaman buku di perpustakaan sekolah secara lebih teratur, cepat, dan nyaman. Dengan antarmuka yang bersih dan modern, proses pencatatan buku, peminjam, serta kegiatan peminjaman dapat dikelola dalam satu tempat.
+<p align="center">
+  <a href="https://github.com/manggalaputraaji/LITERAKSI"><img src="https://img.shields.io/badge/status-dalam%20pengembangan-orange" alt="Status: Dalam pengembangan"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="Lisensi: Apache 2.0"></a>
+  <a href="https://github.com/manggalaputraaji/LITERAKSI/issues"><img src="https://img.shields.io/github/issues/manggalaputraaji/LITERAKSI" alt="GitHub issues"></a>
+</p>
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Status: Early development](https://img.shields.io/badge/status-early%20development-orange.svg)](https://github.com/manggalaputraaji/LITERAKSI)
+## Tentang Proyek
 
-## Tentang LITERAKSI
+LITERAKSI adalah aplikasi manajemen peminjaman buku yang dirancang untuk membantu pengelolaan perpustakaan sekolah menjadi lebih teratur, cepat, dan nyaman. Aplikasi ini berfokus pada pencatatan buku, data peminjam, serta aktivitas peminjaman dalam satu pengalaman yang sederhana dan modern.
 
-Perpustakaan sekolah memerlukan sistem yang sederhana namun andal untuk mengetahui buku yang tersedia, buku yang sedang dipinjam, serta buku yang sudah harus dikembalikan. LITERAKSI dibuat untuk memenuhi kebutuhan tersebut dengan fokus pada kelancaran proses peminjaman.
+Proyek ini dikembangkan sebagai solusi digital untuk mengurangi pencatatan manual dan memberikan pengalaman pengelolaan perpustakaan yang lebih baik bagi petugas maupun siswa.
 
-## Mengapa LITERAKSI?
+## Nilai Utama
 
 - Pencatatan peminjaman yang praktis dan rapi.
-- Alur kerja yang dirancang khusus untuk kebutuhan perpustakaan sekolah.
-- Tampilan antarmuka yang estetis dan mudah dipahami.
-- Struktur yang dapat dikembangkan untuk fitur katalog, anggota, dan laporan di masa depan.
+- Alur kerja yang sesuai dengan kebutuhan perpustakaan sekolah.
+- Antarmuka yang bersih, estetis, dan mudah dipahami.
+- Fondasi yang dapat dikembangkan untuk katalog, anggota, dan laporan.
 
-## Tujuan Utama
+## Fitur
 
-- Mengurangi pekerjaan manual saat mencatat peminjaman buku.
-- Memudahkan pencarian dan pemahaman data peminjaman.
-- Membantu petugas perpustakaan menjaga riwayat peminjaman dengan lebih baik.
-- Memberikan pengalaman pengelolaan perpustakaan yang lebih modern bagi siswa dan staf.
+### Saat ini dan dalam pengembangan
 
-## Rencana Fitur
+- [ ] Pengelolaan katalog buku dan ketersediaan.
+- [ ] Data siswa atau anggota perpustakaan.
+- [ ] Pencatatan peminjaman dan pengembalian.
+- [ ] Informasi batas waktu dan keterlambatan.
+- [ ] Pencarian dan penyaringan data.
+- [ ] Dasbor aktivitas peminjaman.
+- [ ] Tampilan responsif untuk berbagai ukuran layar.
+- [ ] Ekspor laporan peminjaman.
 
 > Daftar fitur dapat berubah seiring perkembangan proyek.
 
-- [ ] Pengelolaan katalog buku dan ketersediaan
-- [ ] Data siswa atau anggota perpustakaan
-- [ ] Pencatatan peminjaman dan pengembalian
-- [ ] Informasi batas waktu dan keterlambatan
-- [ ] Fitur pencarian dan penyaringan data
-- [ ] Dasbor aktivitas peminjaman
-- [ ] Tampilan responsif untuk berbagai ukuran layar
-- [ ] Ekspor laporan peminjaman
+## Teknologi
 
-## Pratinjau
+Teknologi yang digunakan akan diperbarui setelah implementasi aplikasi tersedia. Badge berikut disiapkan sebagai bagian dari dokumentasi proyek dan dapat disesuaikan dengan stack final.
 
-Screenshot dan demo aplikasi akan ditambahkan seiring perkembangan antarmuka dan fitur.
+<p>
+  <img src="https://img.shields.io/badge/HTML5-Documentation-E34F26?logo=html5&logoColor=white" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS3-Documentation-1572B6?logo=css3&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/JavaScript-Documentation-F7DF1E?logo=javascript&logoColor=black" alt="JavaScript">
+</p>
+
+## Demo dan Pratinjau
+
+Bagian ini akan menampilkan tampilan aplikasi setelah screenshot tersedia.
+
+### Dasbor
+
+![Pratinjau dasbor LITERAKSI](assets/screenshots/dashboard.png)
+
+### Pencatatan Peminjaman
+
+![Pratinjau pencatatan peminjaman LITERAKSI](assets/screenshots/borrowing.png)
+
+> Untuk menambahkan screenshot, simpan gambar di folder `assets/screenshots/` dengan nama `dashboard.png` dan `borrowing.png`.
 
 ## Memulai Pengembangan
 
-LITERAKSI masih dalam tahap awal pengembangan. Dokumentasi instalasi dan panduan pengembangan akan dilengkapi setelah source code aplikasi tersedia.
+LITERAKSI masih berada dalam tahap awal pengembangan. Panduan berikut akan dilengkapi setelah source code dan konfigurasi proyek tersedia:
 
-Bagian ini nantinya akan mencakup:
+1. Persyaratan sistem.
+2. Instalasi dependensi.
+3. Konfigurasi environment variable.
+4. Menjalankan aplikasi secara lokal.
+5. Menjalankan pengujian dan build produksi.
 
-1. Persyaratan sistem
-2. Instalasi dependensi
-3. Konfigurasi environment variable
-4. Menjalankan aplikasi secara lokal
-5. Pengujian dan build produksi
+## Struktur Proyek
+
+Struktur direktori akan didokumentasikan setelah source code utama ditambahkan ke repository.
+
+```text
+LITERAKSI/
+├── assets/
+│   └── screenshots/
+├── logo.png
+├── README.md
+└── LICENSE
+```
 
 ## Status Proyek
 
 LITERAKSI merupakan proyek aktif yang masih dalam tahap awal. Arsitektur, fitur, dan dokumentasi dapat berkembang sesuai kebutuhan pengembangan.
 
-Saran, ide, dan masukan sangat terbuka.
-
 ## Kontribusi
 
-Kontribusi sangat terbuka setelah alur kerja pengembangan dipublikasikan. Jika Anda menemukan masalah atau memiliki ide pengembangan:
+Saran dan kontribusi sangat terbuka. Jika ingin berkontribusi:
 
-1. Buka issue yang menjelaskan masalah atau usulan Anda.
-2. Buat branch khusus untuk perubahan yang ingin dilakukan.
+1. Buka issue untuk menjelaskan masalah atau usulan.
+2. Buat branch khusus untuk perubahan yang dikerjakan.
 3. Gunakan commit yang jelas dan terfokus.
-4. Buat pull request dengan deskripsi yang jelas dan lampiran screenshot jika diperlukan.
+4. Buat pull request dengan deskripsi perubahan yang lengkap.
+5. Sertakan screenshot jika perubahan memengaruhi tampilan.
 
-Sebelum membuat issue baru, silakan cek issue yang sudah ada agar tidak terjadi duplikasi.
+Sebelum membuat issue baru, silakan periksa issue yang sudah tersedia untuk menghindari duplikasi.
 
 ## Lisensi
 
