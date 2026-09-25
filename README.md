@@ -1,7 +1,7 @@
 # LITERAKSI: Baca, Pahami, Beraksi
 
 <p align="center">
-  <img src="logo.png" width="180" alt="Logo LITERAKSI">
+  <img src="logo.png" width="300" alt="Logo LITERAKSI">
 </p>
 
 <p align="center">
