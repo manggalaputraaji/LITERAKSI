@@ -38,7 +38,7 @@ $stats = [
     ['icon' => 'assets/img/total.svg', 'angka' => $total, 'label' => 'Total Peminjaman'],
 ];
 
-$books = $pdo->query('SELECT b.judul, k.kategori
+$books = $pdo->query('SELECT b.id_buku, b.judul, k.kategori
     FROM buku b LEFT JOIN kategori k ON k.id_kategori = b.id_kategori
     ORDER BY RAND() LIMIT 5')->fetchAll();
 
@@ -84,13 +84,14 @@ $badge = count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent'
                 <p>Belum ada data buku.</p>
             <?php endif; ?>
             <?php foreach ($books as $b): ?>
-                <div class="book-card">
+                <a class="book-card" href="detail_buku.php?id=<?= (int) $b['id_buku'] ?>"
+                   style="text-decoration:none;color:inherit;display:block;">
                     <div class="cover" style="background: <?= $palette[crc32($b['judul']) % count($palette)] ?>">
                         <span><?= htmlspecialchars($b['judul']) ?></span>
                     </div>
                     <p class="book-title"><?= htmlspecialchars($b['judul']) ?></p>
                     <p class="book-price"><?= htmlspecialchars($b['kategori'] ?? '-') ?></p>
-                </div>
+                </a>
             <?php endforeach; ?>
         </div>
     </main>
