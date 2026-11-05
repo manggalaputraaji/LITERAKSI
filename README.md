@@ -77,6 +77,14 @@ LITERAKSI masih berada dalam tahap awal pengembangan. Panduan berikut akan dilen
 4. Menjalankan aplikasi secara lokal.
 5. Menjalankan pengujian dan build produksi.
 
+### Menyiapkan database MySQL
+
+1. Buat atau pilih database melalui phpMyAdmin, lalu import [`database/literaksi.sql`](database/literaksi.sql). File tersebut membuat database `literaksi` dan seluruh tabel yang diperlukan aplikasi.
+2. Jika ingin mengisi data contoh, import [`database/seed_dummy.sql`](database/seed_dummy.sql) setelah schema. Akun siswa demo menggunakan username `demo_siswa_1` dan password `Demo123!`.
+3. Pastikan host, nama database, dan kredensial MySQL di [`config.php`](config.php) sesuai dengan instalasi lokal.
+
+`literaksi.sql` membuat database awal tanpa akun siswa atau koleksi buku contoh. Data contoh bersifat opsional.
+
 ## Struktur Proyek
 
 Struktur direktori akan didokumentasikan setelah source code utama ditambahkan ke repository.
