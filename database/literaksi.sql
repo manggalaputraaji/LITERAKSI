@@ -118,6 +118,9 @@ CREATE TABLE IF NOT EXISTS `postingan` (
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Development login: username admin, password admin. Change it after first login.
 -- New loans created by members use this reserved system staff ID.
 INSERT IGNORE INTO `petugas` (`id_petugas`, `nama`, `username`, `password`)
-VALUES ('SYS', 'Sistem', NULL, NULL);
+VALUES
+    ('ADM0000001', 'Administrator', 'admin', '$2y$10$6qtrv8tcD07TGgq/oVVcJujUOfcQBenreHTVNZlWpFqGGdh6IIori'),
+    ('SYS', 'Sistem', NULL, NULL);
