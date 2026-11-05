@@ -31,12 +31,12 @@ Proyek ini dikembangkan sebagai solusi digital untuk mengurangi pencatatan manua
 
 ### Saat ini dan dalam pengembangan
 
-- [ ] Pengelolaan katalog buku dan ketersediaan.
-- [ ] Data siswa atau anggota perpustakaan.
-- [ ] Pencatatan peminjaman dan pengembalian.
-- [ ] Informasi batas waktu dan keterlambatan.
+- [x] Pengelolaan katalog buku dan ketersediaan.
+- [x] Data siswa atau anggota perpustakaan.
+- [x] Pencatatan peminjaman dan pengembalian.
+- [x] Informasi batas waktu dan keterlambatan.
 - [ ] Pencarian dan penyaringan data.
-- [ ] Dasbor aktivitas peminjaman.
+- [x] Dasbor aktivitas peminjaman.
 - [ ] Tampilan responsif untuk berbagai ukuran layar.
 - [ ] Ekspor laporan peminjaman.
 
