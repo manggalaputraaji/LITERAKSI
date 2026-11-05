@@ -84,10 +84,15 @@ $badge = count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent'
                 <p>Belum ada data buku.</p>
             <?php endif; ?>
             <?php foreach ($books as $b): ?>
-                <a class="book-card" href="detail_buku.php?id=<?= (int) $b['id_buku'] ?>"
+                <?php $coverUrl = book_cover_url((string) $b['id_buku']); ?>
+                <a class="book-card" href="detail_buku.php?id=<?= rawurlencode((string) $b['id_buku']) ?>"
                    style="text-decoration:none;color:inherit;display:block;">
-                    <div class="cover" style="background: <?= $palette[crc32($b['judul']) % count($palette)] ?>">
-                        <span><?= htmlspecialchars($b['judul']) ?></span>
+                    <div class="cover<?= $coverUrl !== null ? ' has-image' : '' ?>" style="background: <?= $palette[crc32($b['judul']) % count($palette)] ?>">
+                        <?php if ($coverUrl !== null): ?>
+                            <img class="cover-image" src="<?= htmlspecialchars($coverUrl) ?>" alt="Sampul buku: <?= htmlspecialchars($b['judul']) ?>">
+                        <?php else: ?>
+                            <span><?= htmlspecialchars($b['judul']) ?></span>
+                        <?php endif; ?>
                     </div>
                     <p class="book-title"><?= htmlspecialchars($b['judul']) ?></p>
                     <p class="book-price"><?= htmlspecialchars($b['kategori'] ?? '-') ?></p>

@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($row && password_verify($password, $row['password'])) {
             unset($row['password']);
             session_regenerate_id(true);
+            unset($_SESSION['literaksi_admin']);
             $_SESSION['literaksi_user'] = $row;
             header('Location: dashboard.php');
             exit;
@@ -75,7 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit">Log in</button>
                 </form>
 
-                <p class="register">Belum punya akun ? <a href="register.php">Daftar</a></p>
+                <p class="register">Belum punya akun ? <a href="register.php">Daftar</a><br>
+                    <a href="loginadmin.php">Login sebagai admin</a>
+                </p>
             </div>
         </section>
 
