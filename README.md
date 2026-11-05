@@ -83,6 +83,8 @@ LITERAKSI masih berada dalam tahap awal pengembangan. Panduan berikut akan dilen
 2. Jika ingin mengisi data contoh, import [`database/seed_dummy.sql`](database/seed_dummy.sql) setelah schema. Akun siswa demo menggunakan username `demo_siswa_1` dan password `Demo123!`.
 3. Pastikan host, nama database, dan kredensial MySQL di [`config.php`](config.php) sesuai dengan instalasi lokal.
 
+Jika database sudah dibuat sebelum preferensi profil ditambahkan, aplikasi akan membuat tabel pengaturan secara otomatis saat terhubung ke database. Jika pengguna database tidak memiliki izin `CREATE TABLE`, jalankan migrasi [`database/migrations/20261105_member_appearance.sql`](database/migrations/20261105_member_appearance.sql) melalui phpMyAdmin. Foto profil disimpan di `uploads/profile-photos`; pastikan PHP dapat menulis ke folder `uploads`.
+
 `literaksi.sql` membuat database awal tanpa akun siswa atau koleksi buku contoh. Data contoh bersifat opsional.
 
 ## Struktur Proyek

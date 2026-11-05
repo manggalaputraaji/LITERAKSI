@@ -1,17 +1,17 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
+start_app_session();
 
-if (!isset($_SESSION['literaksi_user']) || !is_array($_SESSION['literaksi_user']) || !isset($_SESSION['literaksi_user']['NIS'])) {
+if (isset($_SESSION['literaksi_user']) && (!is_array($_SESSION['literaksi_user']) || !isset($_SESSION['literaksi_user']['NIS']))) {
     unset($_SESSION['literaksi_user'], $_SESSION['user']);
-    header('Location: login.php');
-    exit;
 }
 
 require 'config.php';
 require 'layout.php';
 
-$user = $_SESSION['literaksi_user'];
-$nis  = $user['NIS'];
+$isMember = isset($_SESSION['literaksi_user']['NIS']);
+$user = $_SESSION['literaksi_user'] ?? $_SESSION['literaksi_admin'] ?? ['nama' => 'Tamu'];
+$nis  = $isMember ? $user['NIS'] : null;
 
 $kategoriId = (int) ($_GET['kategori'] ?? 0);
 $cari       = trim($_GET['q'] ?? '');
@@ -44,7 +44,9 @@ function chip_url(int $id, string $cari): string
 }
 
 $page  = 'katalog';
-$badge = count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent']));
+$badge = $isMember
+    ? count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent']))
+    : 0;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -52,7 +54,7 @@ $badge = count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Katalog Buku - Literaksi</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/assets/css/style.css') ?>">
 </head>
 <body class="dash-body">
 

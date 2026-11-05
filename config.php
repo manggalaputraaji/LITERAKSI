@@ -13,6 +13,31 @@ try {
     die('Koneksi database gagal: ' . htmlspecialchars($e->getMessage()));
 }
 
+try {
+    $pdo->query('SELECT 1 FROM pengaturan_anggota LIMIT 0');
+} catch (PDOException $e) {
+    if ($e->getCode() !== '42S02') {
+        throw $e;
+    }
+
+    try {
+        $pdo->exec('CREATE TABLE `pengaturan_anggota` (
+            `NIS` VARCHAR(30) NOT NULL,
+            `foto_profil` VARCHAR(64) DEFAULT NULL,
+            `tema` ENUM(\'light\', \'dark\') NOT NULL DEFAULT \'light\',
+            `warna` ENUM(\'violet\', \'blue\', \'teal\', \'rose\') NOT NULL DEFAULT \'violet\',
+            PRIMARY KEY (`NIS`),
+            CONSTRAINT `fk_pengaturan_anggota_siswa`
+                FOREIGN KEY (`NIS`) REFERENCES `siswa` (`NIS`)
+                ON UPDATE CASCADE ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
+    } catch (PDOException $createError) {
+        error_log('Unable to initialize member appearance settings: ' . $createError->getMessage());
+        die('Pengaturan foto dan tema belum tersedia. Jalankan database/migrations/20261105_member_appearance.sql '
+            . 'atau berikan izin CREATE TABLE kepada pengguna database.');
+    }
+}
+
 function book_cover_url(string $id): ?string
 {
     $directory = __DIR__ . '/uploads/book-covers/';

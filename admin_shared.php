@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
+start_app_session();
 
 if (!isset($_SESSION['literaksi_admin']) || !is_array($_SESSION['literaksi_admin']) || !isset($_SESSION['literaksi_admin']['id_petugas'])) {
     unset($_SESSION['literaksi_admin']);

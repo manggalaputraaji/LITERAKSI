@@ -1,17 +1,17 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
+start_app_session();
 
-if (!isset($_SESSION['literaksi_user']) || !is_array($_SESSION['literaksi_user']) || !isset($_SESSION['literaksi_user']['NIS'])) {
+if (isset($_SESSION['literaksi_user']) && (!is_array($_SESSION['literaksi_user']) || !isset($_SESSION['literaksi_user']['NIS']))) {
     unset($_SESSION['literaksi_user'], $_SESSION['user']);
-    header('Location: login.php');
-    exit;
 }
 
 require 'config.php';
 require 'layout.php';
 
-$user = $_SESSION['literaksi_user'];
-$nis  = $user['NIS'];
+$isMember = isset($_SESSION['literaksi_user']['NIS']);
+$user = $_SESSION['literaksi_user'] ?? $_SESSION['literaksi_admin'] ?? ['nama' => 'Tamu'];
+$nis  = $isMember ? $user['NIS'] : null;
 
 $id_buku = trim($_GET['id'] ?? '');
 if ($id_buku === '') {
@@ -49,7 +49,7 @@ function next_id(PDO $pdo, string $table, string $col, string $prefix): string
 $flash     = '';
 $flashType = 'ok';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pinjam'])) {
+if ($isMember && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pinjam'])) {
     $cek = $pdo->prepare('SELECT COUNT(*) FROM detail_peminjaman d
         JOIN peminjaman p ON p.id_peminjaman = d.id_peminjaman
         WHERE p.NIS = ? AND d.id_buku = ? AND d.tgl_kembali IS NULL');
@@ -93,7 +93,9 @@ $coverColor = $palette[crc32($book['judul']) % count($palette)];
 $coverUrl   = book_cover_url((string) $book['id_buku']);
 
 $page  = 'katalog';
-$badge = count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent']));
+$badge = $isMember
+    ? count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent']))
+    : 0;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -101,7 +103,7 @@ $badge = count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= htmlspecialchars($book['judul']) ?> - Literaksi</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/assets/css/style.css') ?>">
 </head>
 <body class="dash-body">
 
@@ -159,11 +161,16 @@ $badge = count(array_filter(get_notifications($pdo, $nis), fn($n) => $n['urgent'
                     Silakan klik tombol di bawah untuk meminjam buku ini selama 7 hari.
                 </p>
 
-                <form method="post">
-                    <button type="submit" name="pinjam" value="1" class="btn-primary">
-                        Pinjam Buku
-                    </button>
-                </form>
+                <?php if ($isMember): ?>
+                    <form method="post">
+                        <button type="submit" name="pinjam" value="1" class="btn-primary">
+                            Pinjam Buku
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <p>Silakan masuk atau daftar sebagai anggota untuk meminjam buku.</p>
+                    <a class="btn-primary" href="login.php">Masuk untuk meminjam</a>
+                <?php endif; ?>
             </div>
         </div>
     </main>

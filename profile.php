@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
+start_app_session();
 
 if (!isset($_SESSION['literaksi_user']) || !is_array($_SESSION['literaksi_user']) || !isset($_SESSION['literaksi_user']['NIS'])) {
     unset($_SESSION['literaksi_user'], $_SESSION['user']);
@@ -76,7 +77,7 @@ $initial = mb_strtoupper(mb_substr($user['nama'], 0, 1));
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Profil - Literaksi</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/assets/css/style.css') ?>">
 </head>
 <body class="dash-body">
 
@@ -87,7 +88,13 @@ $initial = mb_strtoupper(mb_substr($user['nama'], 0, 1));
 
         <section class="profile-head">
             <div class="profile-cover"></div>
-            <div class="avatar-lg"><?= htmlspecialchars($initial) ?></div>
+            <div class="avatar-lg">
+                <?php if (!empty($_SESSION['literaksi_user']['foto_profil'])): ?>
+                    <img src="profile_photo.php?v=<?= rawurlencode($_SESSION['literaksi_user']['foto_profil']) ?>" alt="Foto profil <?= htmlspecialchars($user['nama']) ?>">
+                <?php else: ?>
+                    <?= htmlspecialchars($initial) ?>
+                <?php endif; ?>
+            </div>
             <h2><?= htmlspecialchars($user['nama']) ?></h2>
             <small>Anggota Perpustakaan &middot; @<?= htmlspecialchars($user['username']) ?></small>
             <br>
@@ -141,7 +148,13 @@ $initial = mb_strtoupper(mb_substr($user['nama'], 0, 1));
                 <?php foreach ($posts as $p): ?>
                     <article class="card post">
                         <div class="post-head">
-                            <div class="avatar-sm"><?= htmlspecialchars($initial) ?></div>
+                            <div class="avatar-sm">
+                                <?php if (!empty($_SESSION['literaksi_user']['foto_profil'])): ?>
+                                    <img src="profile_photo.php?v=<?= rawurlencode($_SESSION['literaksi_user']['foto_profil']) ?>" alt="">
+                                <?php else: ?>
+                                    <?= htmlspecialchars($initial) ?>
+                                <?php endif; ?>
+                            </div>
                             <div>
                                 <strong><?= htmlspecialchars($user['nama']) ?></strong>
                                 <small><?= date('d M Y, H:i', strtotime($p['dibuat'])) ?></small>

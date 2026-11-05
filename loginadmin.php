@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/session.php';
+start_app_session();
 require 'config.php';
 
 $error = '';
@@ -30,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 unset($row['password']);
                 session_regenerate_id(true);
                 unset($_SESSION['literaksi_user'], $_SESSION['user']);
+                unset($_SESSION['member_appearance_loaded']);
                 $_SESSION['literaksi_admin'] = $row;
                 header('Location: admin_dashboard.php');
                 exit;
@@ -44,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login Admin - Literaksi</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/assets/css/style.css') ?>">
 </head>
 <body class="login-body">
     <div class="login-wrap">

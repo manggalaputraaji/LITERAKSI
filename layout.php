@@ -31,6 +31,12 @@ function nav_menu(): array
         ];
     }
 
+    if (!isset($_SESSION['literaksi_user']['NIS'])) {
+        return [
+            'katalog' => ['book', 'Katalog Buku', 'katalog.php'],
+        ];
+    }
+
     $menu = [
         'home'       => ['home',  'Home',            'dashboard.php'],
         'katalog'    => ['book',  'Katalog Buku',    'katalog.php'],
@@ -93,12 +99,49 @@ function get_notifications(PDO $pdo, $nis): array
     return $items;
 }
 
+function member_appearance(PDO $pdo): array
+{
+    $defaults = ['foto_profil' => null, 'tema' => 'light', 'warna' => 'violet'];
+    if (!isset($_SESSION['literaksi_user']['NIS'])) {
+        return $defaults;
+    }
+
+    if (empty($_SESSION['member_appearance_loaded'])) {
+        $settings = $pdo->prepare('SELECT foto_profil, tema, warna FROM pengaturan_anggota WHERE NIS = ?');
+        $settings->execute([$_SESSION['literaksi_user']['NIS']]);
+        $preferences = $settings->fetch() ?: $defaults;
+        $_SESSION['literaksi_user']['foto_profil'] = $preferences['foto_profil'];
+        $_SESSION['literaksi_user']['tema'] = $preferences['tema'];
+        $_SESSION['literaksi_user']['warna'] = $preferences['warna'];
+        $_SESSION['member_appearance_loaded'] = true;
+    }
+
+    if (empty($_SESSION['csrf'])) {
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+    }
+
+    $photo = $_SESSION['literaksi_user']['foto_profil'] ?? null;
+    return [
+        'foto_profil' => is_string($photo)
+            && preg_match('/^[a-f0-9]{32}\.(?:jpg|png|webp)$/', $photo) ? $photo : null,
+        'tema' => in_array($_SESSION['literaksi_user']['tema'] ?? '', ['light', 'dark'], true)
+            ? $_SESSION['literaksi_user']['tema'] : 'light',
+        'warna' => in_array($_SESSION['literaksi_user']['warna'] ?? '', ['violet', 'blue', 'teal', 'rose'], true)
+            ? $_SESSION['literaksi_user']['warna'] : 'violet',
+    ];
+}
+
 function render_sidebar(string $page, array $subnav = [], ?string $activeSubnav = null): void
 {
+    global $pdo;
+
+    $isGuest = !isset($_SESSION['literaksi_user']['NIS']) && !isset($_SESSION['literaksi_admin']);
+    $isMember = !$isGuest && !isset($_SESSION['literaksi_admin']);
+    $appearance = $isMember ? member_appearance($pdo) : null;
 ?>
     <aside class="sidebar">
         <div>
-            <img id="logodash" src="assets/img/logod.png" alt="Literaksi">
+            <img id="logodash" src="assets/img/logol.png" alt="Literaksi">
             <nav>
                 <?php foreach (nav_menu() as $key => [$ic, $label, $href]): ?>
                     <a href="<?= $href ?>" class="<?= $key === $page ? 'active' : '' ?>">
@@ -127,15 +170,42 @@ function render_sidebar(string $page, array $subnav = [], ?string $activeSubnav 
                 <?php endforeach; ?>
             </nav>
         </div>
-        <a href="logout.php" class="logout"><?= icon('power') ?> <span>Keluar Akun</span></a>
+        <?php if (!$isGuest): ?>
+            <a href="logout.php" class="logout"><?= icon('power') ?> <span>Keluar Akun</span></a>
+        <?php endif; ?>
+        <?php if ($isMember): ?>
+            <div class="sidebar-accent-picker" role="group" aria-label="Warna aksen">
+                <span>Warna</span>
+                <?php foreach (['violet' => 'Ungu', 'blue' => 'Biru', 'teal' => 'Teal', 'rose' => 'Rose'] as $color => $label): ?>
+                    <button type="button" class="accent-swatch accent-<?= $color ?>"
+                        data-save-accent="<?= $color ?>" aria-label="Gunakan warna <?= $label ?>"
+                        aria-pressed="<?= $appearance['warna'] === $color ? 'true' : 'false' ?>"
+                        title="<?= $label ?>"></button>
+                <?php endforeach; ?>
+            </div>
+            <p class="appearance-status sidebar-appearance-status" aria-live="polite"></p>
+        <?php endif; ?>
     </aside>
 <?php
 }
 
 function render_topbar(array $user, int $badge, string $page): void
 {
+    global $pdo;
+
     $isAdmin = isset($_SESSION['literaksi_admin']);
+    $isGuest = !$isAdmin && !isset($_SESSION['literaksi_user']['NIS']);
+    $isMember = !$isAdmin && !$isGuest;
+    $appearance = $isMember ? member_appearance($pdo) : null;
+    $storedPhoto = $appearance['foto_profil'] ?? null;
+    $profilePhoto = $storedPhoto !== null ? 'profile_photo.php' : null;
 ?>
+    <?php if ($isMember): ?>
+        <script>
+            document.documentElement.dataset.theme = <?= json_encode($appearance['tema']) ?>;
+            document.documentElement.dataset.accent = <?= json_encode($appearance['warna']) ?>;
+        </script>
+    <?php endif; ?>
     <header class="topbar">
         <?php if (!$isAdmin): ?>
             <form class="search-box" method="get" action="katalog.php">
@@ -144,19 +214,101 @@ function render_topbar(array $user, int $badge, string $page): void
             </form>
         <?php endif; ?>
         <div class="top-right">
-            <?php if (!$isAdmin): ?>
+            <?php if ($isGuest): ?>
+                <nav class="guest-actions" aria-label="Akun">
+                    <a class="guest-login" href="login.php">Masuk</a>
+                    <a class="guest-register" href="register.php">Daftar</a>
+                </nav>
+            <?php endif; ?>
+            <?php if (!$isAdmin && !$isGuest): ?>
                 <a href="notifikasi.php" class="bell <?= $page === 'notifikasi' ? 'active' : '' ?>"
                     aria-label="Notifikasi" title="Notifikasi">
                     <?= icon('bell', 22) ?>
                     <?php if ($badge > 0): ?><span class="badge"><?= $badge ?></span><?php endif; ?>
                 </a>
             <?php endif; ?>
-            <div class="avatar"></div>
+            <?php if ($isMember): ?>
+                <button type="button" class="theme-toggle" data-save-theme
+                    aria-label="Ganti tema" aria-pressed="<?= $appearance['tema'] === 'dark' ? 'true' : 'false' ?>"
+                    title="Ganti tema">
+                    <span class="theme-toggle-icon" aria-hidden="true"><?= $appearance['tema'] === 'dark' ? '☾' : '☼' ?></span>
+                    <span class="theme-toggle-label"><?= $appearance['tema'] === 'dark' ? 'Gelap' : 'Terang' ?></span>
+                </button>
+            <?php endif; ?>
+            <div class="avatar">
+                <?php if ($profilePhoto !== null): ?>
+                    <img src="profile_photo.php?v=<?= rawurlencode($storedPhoto) ?>" alt="">
+                <?php endif; ?>
+            </div>
             <div class="who">
-                <strong><?= htmlspecialchars($user['nama']) ?></strong>
-                <small><?= $isAdmin ? 'Admin Perpustakaan' : 'Anggota Perpustakaan' ?></small>
+                <strong><?= htmlspecialchars($user['nama'] ?? 'Tamu') ?></strong>
+                <small><?= $isAdmin ? 'Admin Perpustakaan' : ($isGuest ? 'Tamu - belum login' : 'Anggota Perpustakaan') ?></small>
             </div>
         </div>
     </header>
+    <?php if ($isMember): ?>
+        <script>
+            (() => {
+                const csrfToken = <?= json_encode($_SESSION['csrf']) ?>;
+                const statusNodes = document.querySelectorAll('.appearance-status');
+                const controls = document.querySelectorAll('[data-save-accent], [data-save-theme]');
+
+                async function savePreference(field, value) {
+                    if (Array.from(controls).some((control) => control.disabled)) return false;
+                    controls.forEach((control) => { control.disabled = true; });
+                    statusNodes.forEach((node) => { node.textContent = 'Menyimpan...'; });
+                    const body = new URLSearchParams({ csrf: csrfToken, field, value });
+                    try {
+                        const response = await fetch('save_appearance.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body
+                        });
+                        const result = await response.json();
+                        if (!response.ok || !result.success) {
+                            throw new Error(result.message || 'Pengaturan gagal disimpan.');
+                        }
+                        if (field === 'theme') {
+                            document.documentElement.dataset.theme = value;
+                        } else {
+                            document.documentElement.dataset.accent = value;
+                        }
+                        statusNodes.forEach((node) => { node.textContent = 'Tersimpan'; });
+                        return true;
+                    } catch (error) {
+                        statusNodes.forEach((node) => {
+                            node.textContent = error instanceof Error ? error.message : 'Pengaturan gagal disimpan.';
+                        });
+                        return false;
+                    } finally {
+                        controls.forEach((control) => { control.disabled = false; });
+                    }
+                }
+
+                document.querySelectorAll('[data-save-accent]').forEach((button) => {
+                    button.addEventListener('click', async () => {
+                        if (button.getAttribute('aria-pressed') === 'true') return;
+                        const saved = await savePreference('accent', button.dataset.saveAccent);
+                        if (saved) {
+                            document.querySelectorAll('[data-save-accent]').forEach((swatch) => {
+                                swatch.setAttribute('aria-pressed', String(swatch === button));
+                            });
+                        }
+                    });
+                });
+
+                document.querySelectorAll('[data-save-theme]').forEach((button) => {
+                    button.addEventListener('click', async () => {
+                        const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+                        if (!await savePreference('theme', theme)) return;
+                        button.setAttribute('aria-pressed', String(theme === 'dark'));
+                        button.querySelector('.theme-toggle-icon').textContent = theme === 'dark' ? '☾' : '☼';
+                        button.querySelector('.theme-toggle-label').textContent = theme === 'dark' ? 'Gelap' : 'Terang';
+                    });
+                });
+            })();
+        </script>
+    <?php endif; ?>
 <?php
 }
