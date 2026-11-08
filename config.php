@@ -1,8 +1,8 @@
 <?php
-$dbHost = 'localhost';
-$dbName = 'literaksi';
-$dbUser = 'root';
-$dbPass = '';
+$dbHost = 'sql107.infinityfree.com';
+$dbName = 'if0_43387843_literaksi';
+$dbUser = 'if0_43387843';
+$dbPass = 'l5F3NVhD8iI1KTo';
 
 try {
     $pdo = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass, [
