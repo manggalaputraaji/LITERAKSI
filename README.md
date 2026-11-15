@@ -10,7 +10,7 @@
 
 <p align="center">
 <a href="https://github.com/manggalaputraaji/LITERAKSI"><img src="https://img.shields.io/badge/status-dalam%20pengembangan-informational?style=flat-square" alt="Status: Dalam pengembangan"></a>
-<a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL_3.0-yellowgreen?style=flat-square" alt="Lisensi: GNU GPL 3.0"></a>
+<img src="https://img.shields.io/badge/license-GPL_3.0-yellowgreen?style=flat-square" alt="Lisensi: GNU GPL 3.0">
 <a href="https://github.com/manggalaputraaji/LITERAKSI/Issues"><img src="https://img.shields.io/github/issues/manggalaputraaji/LITERAKSI?color=important&style=flat-square" alt="GitHub issues"></a>
 </p>
 
@@ -32,19 +32,23 @@ Proyek ini dikembangkan sebagai solusi digital untuk mengurangi pencatatan manua
 ### Saat ini dan dalam pengembangan
 
 - [x] Pengelolaan katalog buku dan ketersediaan.
+- [x] Pencarian dan penyaringan katalog.
 - [x] Data siswa atau anggota perpustakaan.
 - [x] Pencatatan peminjaman dan pengembalian.
 - [x] Informasi batas waktu dan keterlambatan.
-- [ ] Pencarian dan penyaringan data.
+- [x] Diskusi pesan bersama dengan balasan untuk anggota dan petugas.
+- [x] Like pada pesan dan balasan Diskusi.
+- [x] Profil anggota publik dengan foto, bio, dan daftar buku yang sedang dipinjam.
+- [x] Pelaporan pesan diskusi dan moderasi pesan oleh petugas.
+- [x] Tampilan responsif untuk berbagai ukuran layar.
 - [x] Dasbor aktivitas peminjaman.
-- [ ] Tampilan responsif untuk berbagai ukuran layar.
 - [ ] Ekspor laporan peminjaman.
 
 > Daftar fitur dapat berubah seiring perkembangan proyek.
 
 ## Teknologi
 
-Teknologi yang digunakan akan diperbarui setelah implementasi aplikasi tersedia. Badge berikut disiapkan sebagai bagian dari dokumentasi proyek dan dapat disesuaikan dengan stack final.
+LITERAKSI menggunakan PHP, MySQL atau MariaDB, HTML, CSS, dan JavaScript.
 
 <p>
   <img src="https://img.shields.io/badge/HTML5-Documentation-E34F26?logo=html5&style=for-the-badge&labelColor=e3e3e3" alt="HTML5">
@@ -55,53 +59,72 @@ Teknologi yang digunakan akan diperbarui setelah implementasi aplikasi tersedia.
   <img src="https://img.shields.io/badge/phpMyAdmin-Documentation-F89C0E?logo=phpmyadmin&style=for-the-badge&logoColor=F89C0E&labelColor=e3e3e3" alt="phpMyAdmin">
 </p>
 
-## Demo dan Pratinjau
-
-Bagian ini akan menampilkan tampilan aplikasi setelah screenshot tersedia.
-
-### Dasbor
-
-![Pratinjau dasbor LITERAKSI](assets/screenshots/dashboard.png)
-
-### Pencatatan Peminjaman
-
-![Pratinjau pencatatan peminjaman LITERAKSI](assets/screenshots/borrowing.png)
-
 ## Memulai Pengembangan
 
-LITERAKSI masih berada dalam tahap awal pengembangan. Panduan berikut akan dilengkapi setelah source code dan konfigurasi proyek tersedia:
-
-1. Persyaratan sistem.
-2. Instalasi dependensi.
-3. Konfigurasi environment variable.
-4. Menjalankan aplikasi secara lokal.
-5. Menjalankan pengujian dan build produksi.
+Gunakan PHP 8 atau lebih baru dengan ekstensi PDO MySQL, mbstring, dan fileinfo. XAMPP menyediakan kebutuhan tersebut.
 
 ### Menyiapkan database MySQL
 
-1. Buat atau pilih database melalui phpMyAdmin, lalu import [`database/literaksi.sql`](database/literaksi.sql). File tersebut membuat database `literaksi` dan seluruh tabel yang diperlukan aplikasi.
-2. Jika ingin mengisi data contoh, import [`database/seed_dummy.sql`](database/seed_dummy.sql) setelah schema. Akun siswa demo menggunakan username `demo_siswa_1` dan password `Demo123!`.
-3. Pastikan host, nama database, dan kredensial MySQL di [`config.php`](config.php) sesuai dengan instalasi lokal.
+1. Buka database yang ingin dipakai di phpMyAdmin, pilih tab **Import**, lalu pilih [`database/literaksi.sql`](database/literaksi.sql). File ini menghapus dan membuat ulang tabel aplikasi, lalu mengimpor kembali data dari dump yang disediakan.
+2. Secara default, koneksi memakai host `localhost`, database `literaksi`, pengguna `root`, password `root`, dan port `3306`. Ubah nilai di [`config.php`](config.php) atau atur environment variable `LITERAKSI_DB_HOST`, `LITERAKSI_DB_NAME`, `LITERAKSI_DB_USER`, `LITERAKSI_DB_PASS`, dan `LITERAKSI_DB_PORT`.
+3. Jalankan XAMPP Apache dan MySQL, lalu buka `http://localhost/LITERAKSI/`.
 
-Schema menyediakan akun petugas awal `admin` dengan password `admin` untuk pengembangan lokal. Ganti password segera setelah login pertama dan jangan gunakan kredensial bawaan ini di lingkungan produksi.
+Impor schema dapat dijalankan dari phpMyAdmin maupun command line MySQL/MariaDB. File ini menghapus tabel lama, termasuk `postingan` dan `diskusi_suka`, lalu membuat schema baru. Buat backup terpisah sebelum mengimpornya.
 
-Jika database sudah dibuat sebelum preferensi profil ditambahkan, aplikasi akan membuat tabel pengaturan secara otomatis saat terhubung ke database. Jika pengguna database tidak memiliki izin `CREATE TABLE`, jalankan migrasi [`database/migrations/20261105_member_appearance.sql`](database/migrations/20261105_member_appearance.sql) melalui phpMyAdmin. Foto profil disimpan di `uploads/profile-photos`; pastikan PHP dapat menulis ke folder `uploads`.
+Sampul buku disajikan dari file lokal. Untuk memasang sampul lewat pengelola berkas, letakkan gambar di `uploads/book-covers` dan beri nama sesuai ID buku, misalnya `BKB0000001.jpg`. Format yang didukung: JPG/JPEG, PNG, GIF, WebP, AVIF, BMP, dan ICO. ID buku dapat dilihat di Manajemen Perpustakaan > Buku. Nama file ID langsung didahulukan; file lama yang menggunakan nama SHA-256 tetap didukung. Buku tanpa file sampul lokal akan menampilkan sampul placeholder.
 
-`literaksi.sql` membuat database awal tanpa akun siswa atau koleksi buku contoh. Data contoh bersifat opsional.
+Schema mengimpor akun dan data yang ada di dump database yang disediakan. Data tabel `postingan` sengaja tidak dipulihkan karena tabel tersebut tidak digunakan aplikasi.
+
+Jika database tidak memiliki tabel pengaturan profil, aplikasi mencoba membuatnya saat terhubung. Akun database perlu izin `CREATE TABLE` dan `ALTER TABLE` untuk penyesuaian schema otomatis. Foto profil dan sampul disimpan di folder `uploads`; pastikan PHP dapat menulis ke folder tersebut.
+
+Anggota dapat mendaftar dari halaman autentikasi. Penulis, penerbit, kategori, dan buku dapat ditambahkan melalui **Manajemen Perpustakaan**. Anggota dapat memilih tema otomatis, terang, gelap, OLED, atau Flashbang (tema putih terang tanpa animasi berkedip), serta memilih warna banner profil atau mengunggah foto JPG, PNG, atau WebP (maksimal 3 MB).
+
+Untuk database yang sudah ada, pilih database `literaksi` di phpMyAdmin dan jalankan hanya migrasi yang belum diterapkan:
+
+1. [`20261112_discussion.sql`](database/migrations/20261112_discussion.sql)
+2. [`20261114_discussion_reports.sql`](database/migrations/20261114_discussion_reports.sql)
+3. [`20261114_discussion_report_reasons.sql`](database/migrations/20261114_discussion_report_reasons.sql)
+4. [`20261115_discussion_likes.sql`](database/migrations/20261115_discussion_likes.sql)
+5. [`20261112_profile_banner_photo.sql`](database/migrations/20261112_profile_banner_photo.sql)
+6. [`20261112_profile_banner_custom_color.sql`](database/migrations/20261112_profile_banner_custom_color.sql)
+7. [`20261114_member_bio.sql`](database/migrations/20261114_member_bio.sql)
+8. [`20261112_optional_member_email.sql`](database/migrations/20261112_optional_member_email.sql)
+9. [`20261112_member_theme_modes.sql`](database/migrations/20261112_member_theme_modes.sql)
+
+Instalasi baru mendapatkan seluruh tabel dan kolom fitur tersebut dari [`database/literaksi.sql`](database/literaksi.sql).
+
+## Halaman Aplikasi
+
+- Tamu: `guest.php?page=katalog` dan `guest.php?page=detail_buku&id=...`.
+- Anggota: `user.php?page=dashboard`, `katalog`, `detail_buku`, `peminjaman`, `notifikasi`, dan `profile`; diskusi bersama tersedia di `diskusi.php`.
+- Petugas: `admin.php?page=dashboard`, `peminjaman`, `manajemen`, dan `manajemen_user`. Pengelolaan laporan dan penghapusan pesan tersedia langsung di halaman `diskusi.php`.
+- Autentikasi: `autentikasi.php?action=login`, `register`, `loginadmin`, dan `logout`.
 
 ## Struktur Proyek
 
-Struktur direktori akan didokumentasikan setelah source code utama ditambahkan ke repository.
-
 ```text
 LITERAKSI/
-├── assets/
-│   └── screenshots/
-├── logo.png
-├── README.md
-└── LICENSE
+|-- admin.php
+|-- adminlogic.php
+|-- adminkelola.php
+|-- autentikasi.php
+|-- config.php
+|-- diskusi.php
+|-- fungsi.php
+|-- guest.php
+|-- index.html
+|-- layout.php
+|-- preferensi.php
+|-- user.php
+|-- database/
+|   |-- literaksi.sql
+|   `-- migrations/
+|-- assets/
+|   |-- css/
+|   `-- img/
+|-- uploads/
+`-- README.md
 ```
-
 ## Status Proyek
 
 LITERAKSI merupakan proyek aktif yang masih dalam tahap awal. Arsitektur, fitur, dan dokumentasi dapat berkembang sesuai kebutuhan pengembangan.
@@ -120,7 +143,7 @@ Sebelum membuat issue baru, silakan periksa issue yang sudah tersedia untuk meng
 
 ## Lisensi
 
-LITERAKSI didistribusikan di bawah [GNU General Public License 3.0](LICENSE).
+README proyek menyatakan GNU General Public License 3.0, tetapi file teks `LICENSE` belum tersedia di checkout ini.
 
 ## Pengembang
 

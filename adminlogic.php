@@ -2,14 +2,13 @@
 require_once __DIR__ . '/session.php';
 start_app_session();
 
-if (!isset($_SESSION['literaksi_admin']) || !is_array($_SESSION['literaksi_admin']) || !isset($_SESSION['literaksi_admin']['id_petugas'])) {
-    unset($_SESSION['literaksi_admin']);
-    header('Location: loginadmin.php');
+if (!is_admin_session()) {
+    header('Location: autentikasi.php?action=loginadmin');
     exit;
 }
 
 if (!isset($adminPageTab) && !isset($_GET['tab'])) {
-    header('Location: admin_dashboard.php');
+    header('Location: admin.php?page=dashboard');
     exit;
 }
 
@@ -20,7 +19,7 @@ $user = $_SESSION['literaksi_admin'];
 $adminPageTab = $adminPageTab ?? null;
 $pageMode = $adminPageTab ?? 'single';
 $sectionOptions = [
-    'manajemen' => ['books', 'publishers', 'categories'],
+    'manajemen' => ['books', 'publishers', 'categories', 'authors'],
     'manajemen_user' => ['users', 'staff'],
 ];
 
@@ -41,7 +40,7 @@ if (isset($sectionOptions[$pageMode])) {
 } elseif ($adminPageTab === null && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tab'])) {
     $tab = $_POST['tab'];
 }
-$tabs = ['dashboard', 'loans', 'books', 'publishers', 'categories', 'users', 'staff'];
+$tabs = ['dashboard', 'loans', 'books', 'publishers', 'categories', 'authors', 'users', 'staff'];
 if ($adminPageTab !== null) {
     $tabs[] = $adminPageTab;
 }
@@ -77,18 +76,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $kelas = trim($_POST['kelas'] ?? '');
             if (
                 $nis === '' || $nama === '' || !preg_match('/^[A-Za-z0-9_.]{3,50}$/', $username)
-                || !filter_var($email, FILTER_VALIDATE_EMAIL)
+                || ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL))
             ) {
                 throw new RuntimeException('Data pengguna tidak valid.');
             }
-
-            $duplicate = $pdo->prepare('SELECT COUNT(*) FROM siswa WHERE (username = ? OR email = ?) AND NIS <> ?');
-            $duplicate->execute([$username, $email, $nis]);
+            $duplicate = $pdo->prepare("SELECT COUNT(*) FROM `user`
+                WHERE (username = ? OR (? <> '' AND email = ?)) AND NIS <> ?");
+            $duplicate->execute([$username, $email, $email, $nis]);
             if ((int) $duplicate->fetchColumn() > 0) {
                 throw new RuntimeException('Username atau email sudah digunakan akun lain.');
             }
-            $pdo->prepare('UPDATE siswa SET nama = ?, username = ?, email = ?, kelas = ? WHERE NIS = ?')
-                ->execute([$nama, $username, $email, $kelas !== '' ? $kelas : null, $nis]);
+            $pdo->prepare('UPDATE `user` SET nama = ?, username = ?, email = ?, kelas = ? WHERE NIS = ?')
+                ->execute([$nama, $username, $email !== '' ? $email : null, $kelas !== '' ? $kelas : null, $nis]);
             $flash = 'Data pengguna berhasil diperbarui.';
             $tab = 'users';
         } elseif ($action === 'create_user') {
@@ -100,17 +99,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = $_POST['password'] ?? '';
             if (
                 !ctype_digit($nis) || $nama === '' || !preg_match('/^[A-Za-z0-9_.]{3,50}$/', $username)
-                || !filter_var($email, FILTER_VALIDATE_EMAIL) || !is_string($password) || strlen($password) < 6
+                || ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL))
+                || !is_string($password) || strlen($password) < 6
             ) {
                 throw new RuntimeException('Lengkapi data dengan benar. Password minimal 6 karakter.');
             }
-            $duplicate = $pdo->prepare('SELECT COUNT(*) FROM siswa WHERE NIS = ? OR username = ? OR email = ?');
-            $duplicate->execute([$nis, $username, $email]);
+            $duplicate = $pdo->prepare('SELECT COUNT(*) FROM `user` WHERE NIS = ? OR username = ? OR (? <> \'\' AND email = ?)');
+            $duplicate->execute([$nis, $username, $email, $email]);
             if ((int) $duplicate->fetchColumn() > 0) {
                 throw new RuntimeException('NIS, username, atau email sudah digunakan.');
             }
-            $pdo->prepare('INSERT INTO siswa (NIS, username, nama, email, password, kelas) VALUES (?, ?, ?, ?, ?, ?)')
-                ->execute([$nis, $username, $nama, $email, password_hash($password, PASSWORD_DEFAULT), $kelas !== '' ? $kelas : null]);
+            $pdo->prepare('INSERT INTO `user` (NIS, username, nama, email, password, kelas) VALUES (?, ?, ?, ?, ?, ?)')
+                ->execute([$nis, $username, $nama, $email !== '' ? $email : null, password_hash($password, PASSWORD_DEFAULT), $kelas !== '' ? $kelas : null]);
             $flash = 'Pengguna baru berhasil ditambahkan.';
             $tab = 'users';
         } elseif ($action === 'delete_user') {
@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $pdo->beginTransaction();
-            $member = $pdo->prepare('SELECT NIS FROM siswa WHERE NIS = ? FOR UPDATE');
+            $member = $pdo->prepare('SELECT NIS FROM `user` WHERE NIS = ? FOR UPDATE');
             $member->execute([$nis]);
             if (!$member->fetchColumn()) {
                 throw new RuntimeException('Akun tidak ditemukan.');
@@ -131,14 +131,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 WHERE p.NIS = ?')->execute([$nis]);
             $pdo->prepare('DELETE FROM peminjaman WHERE NIS = ?')->execute([$nis]);
 
-            $postsTable = $pdo->prepare('SELECT COUNT(*) FROM information_schema.tables
-                WHERE table_schema = DATABASE() AND table_name = ?');
-            $postsTable->execute(['postingan']);
-            if ((int) $postsTable->fetchColumn() > 0) {
-                $pdo->prepare('DELETE FROM postingan WHERE NIS = ?')->execute([$nis]);
-            }
+            $pdo->prepare('DELETE FROM `preferensi_user` WHERE NIS = ?')->execute([$nis]);
 
-            $deleteMember = $pdo->prepare('DELETE FROM siswa WHERE NIS = ?');
+            $deleteMember = $pdo->prepare('DELETE FROM `user` WHERE NIS = ?');
             $deleteMember->execute([$nis]);
             if ($deleteMember->rowCount() === 0) {
                 throw new RuntimeException('Akun tidak ditemukan.');
@@ -149,11 +144,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($action === 'create_book' || $action === 'update_book') {
             $id = trim($_POST['id_buku'] ?? '');
             $judul = trim($_POST['judul'] ?? '');
+            $penulis = trim($_POST['id_penulis'] ?? '');
+            $sinopsis = trim($_POST['sinopsis'] ?? '');
+            $stokInput = $_POST['stok'] ?? '';
             $kategori = trim($_POST['id_kategori'] ?? '');
             $penerbit = trim($_POST['id_penerbit'] ?? '');
+            if ($id === '' || strlen($id) > 30 || !preg_match('/\A[A-Za-z0-9_-]+\z/', $id)) {
+                throw new RuntimeException('Nomor Buku wajib diisi (maksimal 30 karakter: huruf, angka, tanda hubung, atau garis bawah).');
+            }
             if ($judul === '' || strlen($judul) > 200) {
                 throw new RuntimeException('Judul buku wajib diisi dan maksimal 200 karakter.');
             }
+            if ($penulis !== '') {
+                $check = $pdo->prepare('SELECT COUNT(*) FROM penulis WHERE id_penulis = ?');
+                $check->execute([$penulis]);
+                if ((int) $check->fetchColumn() === 0) {
+                    throw new RuntimeException('Penulis yang dipilih tidak ditemukan.');
+                }
+            }
+            if (strlen($sinopsis) > 60000) {
+                throw new RuntimeException('Sinopsis terlalu panjang. Maksimal 60.000 karakter.');
+            }
+            if (!is_string($stokInput) || !ctype_digit($stokInput) || (int) $stokInput > 100000) {
+                throw new RuntimeException('Stok harus berupa bilangan bulat antara 0 dan 100.000.');
+            }
+            $stok = (int) $stokInput;
             if ($kategori !== '') {
                 $check = $pdo->prepare('SELECT COUNT(*) FROM kategori WHERE id_kategori = ?');
                 $check->execute([$kategori]);
@@ -169,20 +184,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             if ($action === 'create_book') {
-                $id = admin_next_id($pdo, 'buku', 'id_buku', 'BK');
+                $duplicateBook = $pdo->prepare('SELECT COUNT(*) FROM buku WHERE id_buku = ?');
+                $duplicateBook->execute([$id]);
+                if ((int) $duplicateBook->fetchColumn() > 0) {
+                    throw new RuntimeException('Nomor Buku sudah digunakan. Masukkan nomor yang berbeda.');
+                }
                 if (isset($_FILES['cover_image']) && is_array($_FILES['cover_image'])) {
                     $pendingBookCover = admin_store_book_cover($_FILES['cover_image'], $id);
                 }
-                $pdo->prepare('INSERT INTO buku (id_buku, judul, id_kategori, id_penerbit) VALUES (?, ?, ?, ?)')
-                    ->execute([$id, $judul, $kategori !== '' ? $kategori : null, $penerbit !== '' ? $penerbit : null]);
+                $pdo->prepare('INSERT INTO buku
+                    (id_buku, judul, sinopsis, stok, id_kategori, id_penerbit, id_penulis)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)')
+                    ->execute([
+                        $id, $judul, $sinopsis !== '' ? $sinopsis : null, $stok,
+                        $kategori !== '' ? $kategori : null,
+                        $penerbit !== '' ? $penerbit : null,
+                        $penulis !== '' ? $penulis : null,
+                    ]);
                 $pendingBookCover = null;
                 $flash = 'Buku berhasil ditambahkan.';
             } else {
+                $pdo->beginTransaction();
+                $bookLock = $pdo->prepare('SELECT id_buku FROM buku WHERE id_buku = ? FOR UPDATE');
+                $bookLock->execute([$id]);
+                if (!$bookLock->fetchColumn()) {
+                    throw new RuntimeException('Buku tidak ditemukan.');
+                }
+                $borrowedCount = $pdo->prepare('SELECT COUNT(*) FROM detail_peminjaman
+                    WHERE id_buku = ? AND tgl_kembali IS NULL');
+                $borrowedCount->execute([$id]);
+                $currentlyBorrowed = (int) $borrowedCount->fetchColumn();
+                if ($stok < $currentlyBorrowed) {
+                    throw new RuntimeException(
+                        'Stok tidak dapat lebih rendah dari jumlah buku yang sedang dipinjam (' . $currentlyBorrowed . ').'
+                    );
+                }
                 if (isset($_FILES['cover_image']) && is_array($_FILES['cover_image'])) {
                     admin_store_book_cover($_FILES['cover_image'], $id);
                 }
-                $pdo->prepare('UPDATE buku SET judul = ?, id_kategori = ?, id_penerbit = ? WHERE id_buku = ?')
-                    ->execute([$judul, $kategori !== '' ? $kategori : null, $penerbit !== '' ? $penerbit : null, $id]);
+                $pdo->prepare('UPDATE buku
+                    SET judul = ?, sinopsis = ?, stok = ?, id_kategori = ?, id_penerbit = ?, id_penulis = ?
+                    WHERE id_buku = ?')
+                    ->execute([
+                        $judul, $sinopsis !== '' ? $sinopsis : null, $stok,
+                        $kategori !== '' ? $kategori : null,
+                        $penerbit !== '' ? $penerbit : null,
+                        $penulis !== '' ? $penulis : null, $id,
+                    ]);
+                $pdo->commit();
                 $flash = 'Data buku berhasil diperbarui.';
             }
             $tab = 'books';
@@ -246,6 +295,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $flash = 'Kategori berhasil dihapus.';
             }
             $tab = 'categories';
+        } elseif (in_array($action, ['create_author', 'update_author', 'delete_author'], true)) {
+            $id = trim($_POST['id_penulis'] ?? '');
+            $name = trim($_POST['nama_penulis'] ?? '');
+            if ($action === 'create_author' || $action === 'update_author') {
+                if ($name === '' || strlen($name) > 150) {
+                    throw new RuntimeException('Nama penulis wajib diisi dan maksimal 150 karakter.');
+                }
+                if ($action === 'create_author') {
+                    $id = admin_next_id($pdo, 'penulis', 'id_penulis', 'PNS');
+                    $pdo->prepare('INSERT INTO penulis (id_penulis, nama_penulis) VALUES (?, ?)')->execute([$id, $name]);
+                    $flash = 'Penulis berhasil ditambahkan.';
+                } else {
+                    $pdo->prepare('UPDATE penulis SET nama_penulis = ? WHERE id_penulis = ?')->execute([$name, $id]);
+                    $flash = 'Data penulis berhasil diperbarui.';
+                }
+            } else {
+                $check = $pdo->prepare('SELECT COUNT(*) FROM buku WHERE id_penulis = ?');
+                $check->execute([$id]);
+                if ((int) $check->fetchColumn() > 0) {
+                    throw new RuntimeException('Penulis masih digunakan buku. Ubah penulis buku terlebih dahulu.');
+                }
+                $pdo->prepare('DELETE FROM penulis WHERE id_penulis = ?')->execute([$id]);
+                $flash = 'Penulis berhasil dihapus.';
+            }
+            $tab = 'authors';
         } elseif (in_array($action, ['create_staff', 'update_staff', 'delete_staff'], true)) {
             $id = trim($_POST['id_petugas'] ?? '');
             $nama = trim($_POST['nama'] ?? '');
@@ -261,22 +335,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($password !== '' && (!is_string($password) || strlen($password) < 6)) {
                     throw new RuntimeException('Password minimal 6 karakter.');
                 }
-                $duplicate = $pdo->prepare('SELECT COUNT(*) FROM petugas WHERE username = ? AND id_petugas <> ?');
+                $duplicate = $pdo->prepare('SELECT COUNT(*) FROM `admin` WHERE username = ? AND id_petugas <> ?');
                 $duplicate->execute([$username, $id]);
                 if ($username !== '' && (int) $duplicate->fetchColumn() > 0) {
                     throw new RuntimeException('Username petugas sudah digunakan.');
                 }
                 if ($action === 'create_staff') {
-                    $id = admin_next_id($pdo, 'petugas', 'id_petugas', 'PTG');
-                    $pdo->prepare('INSERT INTO petugas (id_petugas, nama, username, password) VALUES (?, ?, ?, ?)')
+                    $id = admin_next_id($pdo, 'admin', 'id_petugas', 'PTG');
+                    $pdo->prepare('INSERT INTO `admin` (id_petugas, nama, username, password) VALUES (?, ?, ?, ?)')
                         ->execute([$id, $nama, $username, password_hash($password, PASSWORD_DEFAULT)]);
                     $flash = 'Petugas berhasil ditambahkan.';
                 } elseif ($password !== '') {
-                    $pdo->prepare('UPDATE petugas SET nama = ?, username = ?, password = ? WHERE id_petugas = ?')
+                    $pdo->prepare('UPDATE `admin` SET nama = ?, username = ?, password = ? WHERE id_petugas = ?')
                         ->execute([$nama, $username !== '' ? $username : null, password_hash($password, PASSWORD_DEFAULT), $id]);
                     $flash = 'Data petugas dan password berhasil diperbarui.';
                 } else {
-                    $pdo->prepare('UPDATE petugas SET nama = ?, username = ? WHERE id_petugas = ?')
+                    $pdo->prepare('UPDATE `admin` SET nama = ?, username = ? WHERE id_petugas = ?')
                         ->execute([$nama, $username !== '' ? $username : null, $id]);
                     $flash = 'Data petugas berhasil diperbarui.';
                 }
@@ -293,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ((int) $check->fetchColumn() > 0) {
                     throw new RuntimeException('Petugas memiliki riwayat peminjaman dan tidak dapat dihapus.');
                 }
-                $pdo->prepare('DELETE FROM petugas WHERE id_petugas = ?')->execute([$id]);
+                $pdo->prepare('DELETE FROM `admin` WHERE id_petugas = ?')->execute([$id]);
                 $flash = 'Petugas berhasil dihapus.';
             }
             $tab = 'staff';
@@ -357,6 +431,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'create_book' => 'books', 'update_book' => 'books', 'delete_book' => 'books',
             'create_publisher' => 'publishers', 'update_publisher' => 'publishers', 'delete_publisher' => 'publishers',
             'create_category' => 'categories', 'update_category' => 'categories', 'delete_category' => 'categories',
+            'create_author' => 'authors', 'update_author' => 'authors', 'delete_author' => 'authors',
             'create_staff' => 'staff', 'update_staff' => 'staff', 'delete_staff' => 'staff',
             'confirm_return' => 'loans', 'reject_return' => 'loans',
         ];
@@ -370,7 +445,8 @@ function admin_next_id(PDO $pdo, string $table, string $column, string $prefix):
         'buku' => 'id_buku',
         'penerbit' => 'id_penerbit',
         'kategori' => 'id_kategori',
-        'petugas' => 'id_petugas',
+        'penulis' => 'id_penulis',
+        'admin' => 'id_petugas',
     ];
     if (!isset($allowed[$table]) || $allowed[$table] !== $column) {
         throw new LogicException('Konfigurasi ID tidak valid.');
@@ -378,8 +454,8 @@ function admin_next_id(PDO $pdo, string $table, string $column, string $prefix):
 
     $width = 10 - strlen($prefix);
     $pattern = '^' . preg_quote($prefix, '/') . '[0-9]+$';
-    $sql = "SELECT MAX(CAST(SUBSTRING($column, " . (strlen($prefix) + 1) . ") AS UNSIGNED))
-            FROM $table WHERE $column REGEXP " . $pdo->quote($pattern);
+    $sql = "SELECT MAX(CAST(SUBSTRING(`$column`, " . (strlen($prefix) + 1) . ") AS UNSIGNED))
+            FROM `$table` WHERE `$column` REGEXP " . $pdo->quote($pattern);
     $next = (int) $pdo->query($sql)->fetchColumn() + 1;
     if (strlen((string) $next) > $width) {
         throw new RuntimeException('Batas ID untuk data baru sudah tercapai.');
@@ -452,13 +528,16 @@ function admin_page_header(string $page, string $title, array $subnav = [], ?str
 {
     global $user, $flash, $flashType;
     ?>
-    <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title><?= htmlspecialchars($title) ?> - Literaksi</title><link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/assets/css/style.css') ?>"></head><body class="dash-body">
+    <!DOCTYPE html><html lang="id"><head>
+    <link rel="icon" href="assets/img/logo.ico" type="image/x-icon"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title><?= htmlspecialchars($title) ?> - Literaksi</title><link rel="stylesheet" href="assets/css/style.css?v=<?= filemtime(__DIR__ . '/assets/css/style.css') ?>"></head><body class="dash-body">
     <?php render_sidebar($page, $subnav, $activeSection); ?><main class="main"><?php render_topbar($user, 0, $page); ?><div class="admin-heading"><div><p class="admin-eyebrow">PANEL ADMIN</p><h1 class="page-title"><?= htmlspecialchars($title) ?></h1></div></div><?php if ($flash !== ''): ?><div class="alert <?= $flashType === 'ok' ? 'ok' : 'bad' ?>"><?= htmlspecialchars($flash) ?></div><?php endif; ?>
     <?php
 }
 function admin_page_footer(): void
 {
     ?>
+    <script src="pratinjau.js" defer></script>
+    <?php render_site_footer(); ?>
     </main></body></html>
     <?php
 }

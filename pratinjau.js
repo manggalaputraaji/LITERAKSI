@@ -1,7 +1,3 @@
-<div class="admin-cover-preview-popup" aria-hidden="true">
-        <img alt="Pratinjau sampul buku">
-    </div>
-    <script>
         document.querySelectorAll('.admin-chart-panel').forEach((chartPanel) => {
             const chartTooltip = chartPanel.querySelector('.admin-chart-tooltip');
             if (!chartTooltip) return;
@@ -54,36 +50,3 @@
                 point.addEventListener('blur', hideChartTooltip);
             });
         });
-
-        const coverPreviewPopup = document.querySelector('.admin-cover-preview-popup');
-        const coverPreviewImage = coverPreviewPopup.querySelector('img');
-
-        function showCoverPreview(trigger) {
-            coverPreviewImage.src = trigger.dataset.coverPreview;
-            coverPreviewPopup.style.display = 'block';
-            coverPreviewPopup.setAttribute('aria-hidden', 'false');
-
-            const rect = trigger.getBoundingClientRect();
-            const popupWidth = coverPreviewPopup.offsetWidth;
-            const popupHeight = coverPreviewPopup.offsetHeight;
-            const left = rect.right + popupWidth + 12 <= window.innerWidth
-                ? rect.right + 12
-                : Math.max(12, rect.left - popupWidth - 12);
-            const top = Math.min(Math.max(12, rect.top), window.innerHeight - popupHeight - 12);
-            coverPreviewPopup.style.left = `${left}px`;
-            coverPreviewPopup.style.top = `${top}px`;
-        }
-
-        function hideCoverPreview() {
-            coverPreviewPopup.style.display = 'none';
-            coverPreviewPopup.setAttribute('aria-hidden', 'true');
-        }
-
-        document.querySelectorAll('.admin-cover-preview-trigger').forEach((trigger) => {
-            trigger.addEventListener('mouseenter', () => showCoverPreview(trigger));
-            trigger.addEventListener('mouseleave', hideCoverPreview);
-            trigger.addEventListener('focus', () => showCoverPreview(trigger));
-            trigger.addEventListener('blur', hideCoverPreview);
-        });
-        window.addEventListener('scroll', hideCoverPreview, true);
-    </script>
